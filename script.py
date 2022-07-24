@@ -11,13 +11,13 @@ import bpy
 import sys
 import os
 import bpy
-blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER/blender_spirals"
+blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER/blender_spirals/geometry"
 if blender_scripts_dir not in sys.path:
    sys.path.append(blender_scripts_dir)
 
-import alexgeometry
+import circle
 import importlib
-importlib.reload(alexgeometry)
+importlib.reload(circle)
 
 
 def create_gp(gp_data: GreasePencil, name) -> GreasePencil:
@@ -70,16 +70,14 @@ def create_gp_material(name: str, color) -> bpy.types.Material:
 
 gp_dat, gp_obj = init_gp("TestPencil")
 
-# a circle of 1 meter radius with 10 segments
-x, y, r, n = 0, 1, 1, 30
-granularity = 3
+x, y, frames, frame_length = 1, 0, 30, 2
 gp_layer = create_gp_layer(gp_obj, "TestLayer" , True)
-for segment in range(n):
-    gp_frame = gp_layer.frames.new(segment * granularity)
+for segment in range(frames):
+    gp_frame = gp_layer.frames.new(segment * frame_length)
     gp_mat = create_gp_material("BlackLine", [0., 0., 0., 1.])
     gp_dat.materials.append(gp_mat)
 
-    z, w = alexgeometry.next_point_on_a_circle(x, y, n, r)
+    z, w = circle.next_point(x, y, 360/frames)
     gp_stroke = stroke_polyline(gp_frame, [[x, y, 0], [z, w, 0]], 10)
     print(x, y, z, w)
     x, y = z, w
@@ -87,5 +85,5 @@ for segment in range(n):
 
 
 print("Success!")
-print("number of frames" + str(n * granularity))
+print("number of frames" + str(frames * frame_length))
 

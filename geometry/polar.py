@@ -19,9 +19,8 @@ class PolarPoint(Point):
 
 def cartesian_to_polar(p: CartesianPoint) -> PolarPoint:
     r = math.sqrt(p.x*p.x + p.y*p.y)
-    t = math.acos(p.x/r) if p.y >= 0 else -1 * acos(p.x/r)
+    t = math.acos(p.x/r) if p.y >= 0 else -1 * math.acos(p.x/r)
     return PolarPoint(r, math.degrees(t))
-
 
 def polar_to_cartesian(p: CartesianPoint) -> CartesianPoint:
     return CartesianPoint(
