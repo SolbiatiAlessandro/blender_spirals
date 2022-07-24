@@ -11,7 +11,7 @@ import bpy
 import sys
 import os
 import bpy
-blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER"
+blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER/blender_spirals"
 if blender_scripts_dir not in sys.path:
    sys.path.append(blender_scripts_dir)
 
@@ -71,10 +71,10 @@ def create_gp_material(name: str, color) -> bpy.types.Material:
 gp_dat, gp_obj = init_gp("TestPencil")
 
 # a circle of 1 meter radius with 10 segments
-x, y, r, n = 0, 1, 1, 10
+x, y, r, n = 0, 1, 1, 30
 gp_layer = create_gp_layer(gp_obj, "TestLayer" , True)
-for segment in range(10):
-    gp_frame = gp_layer.frames.new(segment * 10)
+for segment in range(n):
+    gp_frame = gp_layer.frames.new(segment * 3)
     gp_mat = create_gp_material("BlackLine", [0., 0., 0., 1.])
     gp_dat.materials.append(gp_mat)
 
