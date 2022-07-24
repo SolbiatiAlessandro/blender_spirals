@@ -72,9 +72,10 @@ gp_dat, gp_obj = init_gp("TestPencil")
 
 # a circle of 1 meter radius with 10 segments
 x, y, r, n = 0, 1, 1, 30
+granularity = 3
 gp_layer = create_gp_layer(gp_obj, "TestLayer" , True)
 for segment in range(n):
-    gp_frame = gp_layer.frames.new(segment * 3)
+    gp_frame = gp_layer.frames.new(segment * granularity)
     gp_mat = create_gp_material("BlackLine", [0., 0., 0., 1.])
     gp_dat.materials.append(gp_mat)
 
@@ -86,3 +87,5 @@ for segment in range(n):
 
 
 print("Success!")
+print("number of frames" + str(n * granularity))
+
