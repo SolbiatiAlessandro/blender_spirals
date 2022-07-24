@@ -1,5 +1,5 @@
 """
-filename = "/Users/lessandro/Hacking/BLENDER/greasepencil1.py"
+filename = "/Users/lessandro/Hacking/BLENDER/blender_spirals/script.py"
 exec(compile(open(filename).read(), filename, 'exec'))
 """
 
@@ -70,15 +70,16 @@ def create_gp_material(name: str, color) -> bpy.types.Material:
 
 gp_dat, gp_obj = init_gp("TestPencil")
 
-x, y, frames, frame_length = 1, 0, 30, 2
+x, y, frames, frame_length = 1, 0, 60, 1
 gp_layer = create_gp_layer(gp_obj, "TestLayer" , True)
+gp_frame = gp_layer.frames.new(0)
 for segment in range(frames):
-    gp_frame = gp_layer.frames.new(segment * frame_length)
+    gp_layer.frames.copy(gp_frame)
     gp_mat = create_gp_material("BlackLine", [0., 0., 0., 1.])
     gp_dat.materials.append(gp_mat)
 
     z, w = circle.next_point(x, y, 360/frames)
-    gp_stroke = stroke_polyline(gp_frame, [[x, y, 0], [z, w, 0]], 10)
+    gp_stroke = stroke_polyline(gp_frame, [[x, y, 0], [z, w, 0]], 20)
     print(x, y, z, w)
     x, y = z, w
 
