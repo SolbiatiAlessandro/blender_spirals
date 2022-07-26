@@ -14,11 +14,18 @@ import bpy
 blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER/blender_spirals/geometry"
 if blender_scripts_dir not in sys.path:
    sys.path.append(blender_scripts_dir)
+blender_scripts_dir = "/Users/lessandro/Hacking/BLENDER/blender_spirals/music"
+if blender_scripts_dir not in sys.path:
+   sys.path.append(blender_scripts_dir)
 
-import circle
+import spiral
 import importlib
-importlib.reload(circle)
+importlib.reload(spiral)
 
+import random
+import math
+
+# BLENDER
 
 def create_gp(gp_data: GreasePencil, name) -> GreasePencil:
     if name not in bpy.context.scene.objects:
@@ -68,19 +75,44 @@ def create_gp_material(name: str, color) -> bpy.types.Material:
     return gp_mat
 
 
+# AUDIO
+
+import music.audio as Audio
+audioSplits = Audio.rmsSplits("/Users/lessandro/Hacking/BLENDER/blender_spirals/music/24jul-listzforblender.wav", 25) # 25 fps
+
+maxRMS = max(audioSplits)
+minRMS = (sum(audioSplits) / len(audioSplits))
+
+
+# CREATE SPIRAL
+
 gp_dat, gp_obj = init_gp("TestPencil")
 
-x, y, frames, frame_length = 1, 0, 60, 1
+x, y, frames, frame_length = 1, 0, len(audioSplits), 1
 gp_layer = create_gp_layer(gp_obj, "TestLayer" , True)
 gp_frame = gp_layer.frames.new(0)
-for segment in range(frames):
+for frame_number in range(frames):
     gp_layer.frames.copy(gp_frame)
     gp_mat = create_gp_material("BlackLine", [0., 0., 0., 1.])
     gp_dat.materials.append(gp_mat)
+    if frame_number % 100 == 0:
+        bpy.context.scene.world.color = (random.random(), random.random(), random.random())
+        bpy.ops.anim.keyframe_insert_button(all=True)
 
-    z, w = circle.next_point(x, y, 360/frames)
-    gp_stroke = stroke_polyline(gp_frame, [[x, y, 0], [z, w, 0]], 20)
-    print(x, y, z, w)
+
+
+    rms = audioSplits[frame_number]
+    rstep_base = 5
+    tstep_base = 0.05
+    music_multiplier = (rms / (maxRMS - minRMS)) 
+    z, w = spiral.next_point(
+            x, 
+            y, 
+            music_multiplier * (2 * rstep_base), 
+            music_multiplier * (2 * tstep_base), 
+    )
+    gp_stroke = stroke_polyline(gp_frame, [[x, y, 0], [z, w, 0]], 10 * math.sqrt(frame_number))
+    #print(x, y, z, w)
     x, y = z, w
 
 
